@@ -64,8 +64,9 @@ public class BrainfuckInterpreter {
 			if(loopStack.isEmpty()) {
 				throw new IllegalStateException("No matching [ found.");
 			}
+			int loopStart = loopStack.pop() - 1;
 			if(memory[pointer] !=  0) {
-				ip = loopStack.pop() - 1;
+				ip = loopStart;
 			}
 		});
 	}
@@ -78,14 +79,20 @@ public class BrainfuckInterpreter {
 		for(ip = 0; ip < code.length(); ip++) { // Instruction pointer
 			char operator = code.charAt(ip);
 			operatorFunctions.getOrDefault(operator, DEFAULT_OPERATOR).run();
-			if(operator != lastOperator) {
-				for(int i = 0; i < 6; i++) {
-					System.out.print(memory[i] + ", ");
-				}
-				System.out.println(" IP: " + ip);
-				input.nextLine();
-				lastOperator = operator;
-			}
+			// Uncomment for debugging
+//			if(operator != lastOperator) {
+//				for(int i = 0; i < 6; i++) {
+//					System.out.print(memory[i] + ", ");
+//				}
+//				System.out.println(" IP: " + ip);
+//				try {
+//					Thread.sleep(500l);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				lastOperator = operator;
+//			}
 		}
 	}
 	
