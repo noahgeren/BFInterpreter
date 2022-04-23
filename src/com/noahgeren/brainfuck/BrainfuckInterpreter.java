@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -31,17 +30,20 @@ public class BrainfuckInterpreter {
 			pointer = (pointer - 1 + TAPE_LENGTH) % TAPE_LENGTH;
 		});
 		operatorFunctions.put('+', () -> {
-			memory[pointer] = (memory[pointer] + 1) % 255;
+			memory[pointer] = (memory[pointer] + 1) % 256;
 		});
 		operatorFunctions.put('-', () -> {
-			memory[pointer] = (memory[pointer] - 1 + 255) % 255;
+			memory[pointer] = (memory[pointer] - 1 + 256) % 256;
 		});
 		operatorFunctions.put('.', () -> {
 			output.accept((char) memory[pointer]);
 		});
 		operatorFunctions.put(',', () -> {
 			if(inputQueue.isEmpty()) {
-				input.get().chars().forEach(c -> inputQueue.add((char) c));
+				String next = input.get();
+				if(next != null) {
+					next.chars().forEach(c -> inputQueue.add((char) c));
+				}
 			}
 			memory[pointer] = inputQueue.isEmpty() ? 0 : inputQueue.poll();
 		});
@@ -74,25 +76,12 @@ public class BrainfuckInterpreter {
 	public void execute(final String code) {
 		reset();
 		this.code = code;
-		Scanner input = new Scanner(System.in);
-		char lastOperator = ' ';
-		for(ip = 0; ip < code.length(); ip++) { // Instruction pointer
+		for(ip = 0; ip < code.length(); ip++) {
+			if(Thread.interrupted()) {
+				break;
+			}
 			char operator = code.charAt(ip);
 			operatorFunctions.getOrDefault(operator, DEFAULT_OPERATOR).run();
-			// Uncomment for debugging
-//			if(operator != lastOperator) {
-//				for(int i = 0; i < 6; i++) {
-//					System.out.print(memory[i] + ", ");
-//				}
-//				System.out.println(" IP: " + ip);
-//				try {
-//					Thread.sleep(500l);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				lastOperator = operator;
-//			}
 		}
 	}
 	
