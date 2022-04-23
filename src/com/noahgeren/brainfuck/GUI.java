@@ -49,7 +49,6 @@ public class GUI {
 		pane.add(output);
 		
 		final BrainfuckInterpreter bf = new BrainfuckInterpreter(() -> {
-			System.out.println("here");
 			// Input
 			try {
 				SwingUtilities.invokeAndWait(() -> {
